@@ -91,8 +91,16 @@ $ CHANNEL="release" $CG_GCCJIT_DIR/cargo.sh run
 
 If you compiled cg_gccjit in debug mode (aka you didn't pass `--release` to `./test.sh`) you should use `CHANNEL="debug"` instead or omit `CHANNEL="release"` completely.
 
+### LTO
+
 To use LTO, you need to set the variable `FAT_LTO=1` and `EMBED_LTO_BITCODE=1` in addition to setting `lto = "fat"` in the `Cargo.toml`.
 Don't set `FAT_LTO` when compiling the sysroot, though: only set `EMBED_LTO_BITCODE=1`.
+
+Failing to set `EMBED_LTO_BITCODE` will give you the following error:
+
+```
+error: failed to copy bitcode to object file: No such file or directory (os error 2)
+```
 
 ### Rustc
 
