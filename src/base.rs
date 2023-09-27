@@ -99,7 +99,7 @@ pub fn compile_codegen_unit(tcx: TyCtxt<'_>, cgu_name: Symbol, target_info: Lock
             .collect();
 
         // TODO(antoyo): only set on x86 platforms.
-        context.add_command_line_option("-masm=intel");
+        //context.add_command_line_option("-masm=intel");
 
         if !disabled_features.contains("avx") {
             // NOTE: we always enable AVX because the equivalent of llvm.x86.sse2.cmp.pd in GCC for

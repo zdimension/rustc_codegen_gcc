@@ -1224,7 +1224,7 @@ impl<'a, 'gcc, 'tcx> BuilderMethods<'a, 'tcx> for Builder<'a, 'gcc, 'tcx> {
         #[cfg(feature="master")]
         {
             let personality = self.rvalue_as_function(_personality);
-            self.current_func().set_personality_function(personality);
+            //self.current_func().set_personality_function(personality);
         }
     }
 
