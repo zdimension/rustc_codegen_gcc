@@ -26,11 +26,10 @@ TARGET_TRIPLE="m68k-unknown-linux-gnu"
 linker=''
 RUN_WRAPPER=''
 if [[ "$HOST_TRIPLE" != "$TARGET_TRIPLE" ]]; then
-   #if [[ "$TARGET_TRIPLE" == "m68k-unknown-linux-gnu" ]]; then
+   if [[ "$TARGET_TRIPLE" == "m68k-unknown-linux-gnu" ]]; then
        #TARGET_TRIPLE="mips-unknown-linux-gnu"
-       #linker='-Clinker=m68k-linux-gcc'
-   #el
-   if [[ "$TARGET_TRIPLE" == "aarch64-unknown-linux-gnu" ]]; then
+       linker='-Clinker=m68k-unknown-linux-gnu-gcc'
+   elif [[ "$TARGET_TRIPLE" == "aarch64-unknown-linux-gnu" ]]; then
       # We are cross-compiling for aarch64. Use the correct linker and run tests in qemu.
       linker='-Clinker=aarch64-linux-gnu-gcc'
       RUN_WRAPPER='qemu-aarch64 -L /usr/aarch64-linux-gnu'
@@ -61,5 +60,5 @@ export DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH
 # NOTE: To avoid the -fno-inline errors, use /opt/gcc/bin/gcc instead of cc.
 # To do so, add a symlink for cc to /opt/gcc/bin/gcc in our PATH.
 # Another option would be to add the following Rust flag: -Clinker=/opt/gcc/bin/gcc
-export PATH="/opt/m68k-gcc/bin:$PATH"
+export PATH="/opt/m68k-unknown-linux-gnu/bin:$PATH"
 export TARGET=$TARGET_TRIPLE
