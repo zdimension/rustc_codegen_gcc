@@ -37,7 +37,9 @@ jobs:
 
     steps:
     - name: Install packages
-      run: sudo apt-get install qemu qemu-user-static
+      run: |
+        sudo apt-get update
+        sudo apt-get install qemu qemu-user-static
 
     - uses: actions/checkout@v3
 
@@ -67,14 +69,6 @@ jobs:
     - name: Setup path to libgccjit
       run: |
           sudo dpkg -i gcc-m68k-13.deb
-          echo "*********************"
-          ls /usr/bin
-          echo "*********************"
-          ls /bin
-          echo "*********************"
-          ls /lib
-          echo "*********************"
-          ls /usr/lib
           echo /usr/lib/ > gcc_path
 
     - name: Set env
@@ -119,7 +113,6 @@ jobs:
         #path: rust
         #key: ${{ runner.os }}-packages-${{ hashFiles('rust/.git/HEAD') }}
 
-    # TODO: reset cross-gcc config file (i.e. try to revert CT_BINUTILS_V_2_37 to CT_BINUTILS_V_2_38).
     - name: Test build (TODO REMOVE)
       run: |
         cat > main.c <<EOF
@@ -148,6 +141,10 @@ jobs:
     - name: Build
       run: |
         ./y.sh prepare --only-libcore
+        # TODO: move into prepare command under a flag --cross-patches?
+        pushd build_sysroot/sysroot_src
+        git am ../../cross_patches/*.patch
+        popd
         ./build.sh
         cargo test
         ./clean_all.sh

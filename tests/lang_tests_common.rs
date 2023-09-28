@@ -50,6 +50,14 @@ pub fn main_inner(profile: Profile) {
                 "-o", exe.to_str().expect("to_str"),
                 path.to_str().expect("to_str"),
             ]);
+
+            // TODO: allow setting this with a CLI arg (or environment variable if not possible).
+            compiler.args(&["--target", "m68k-unknown-linux-gnu"]);
+            compiler.args(&["-Clinker=m68k-unknown-linux-gnu-gcc"]);
+            let mut env_path = std::env::var("PATH").unwrap_or_default();
+            env_path = format!("/opt/m68k-unknown-linux-gnu/bin:{}", env_path);
+            compiler.env("PATH", env_path);
+
             if let Some(flags) = option_env!("TEST_FLAGS") {
                 for flag in flags.split_whitespace() {
                     compiler.arg(&flag);
@@ -65,7 +73,21 @@ pub fn main_inner(profile: Profile) {
                 }
             }
             // Test command 2: run `tempdir/x`.
-            let runtime = Command::new(exe);
+            let vm_parent_dir = "..";
+            let vm_dir = "vm";
+            let exe_filename = exe.file_name().unwrap();
+            let vm_exe_path = PathBuf::from(vm_parent_dir).join(vm_dir).join("home").join(exe_filename);
+            // FIXME: panicking here makes the test pass.
+            let inside_vm_exe_path = PathBuf::from("/home").join(&exe_filename);
+            let mut copy = Command::new("sudo");
+            copy.arg("cp");
+            copy.args(&[&exe, &vm_exe_path]);
+            copy.status().expect("copy executable inside VM");
+
+            let mut runtime = Command::new("sudo");
+            runtime.args(&["chroot", vm_dir, "qemu-m68k-static"]);
+            runtime.arg(inside_vm_exe_path);
+            runtime.current_dir(vm_parent_dir);
             vec![("Compiler", compiler), ("Run-time", runtime)]
         })
         .run();

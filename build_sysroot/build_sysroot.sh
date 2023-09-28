@@ -22,7 +22,8 @@ if [[ "$1" == "--release" ]]; then
     RUSTFLAGS="$RUSTFLAGS -Zmir-opt-level=3" cargo build --target $TARGET_TRIPLE --release
 else
     sysroot_channel='debug'
-    cargo build --target $TARGET_TRIPLE --features compiler_builtins/c
+    # TODO: add flags to simplify the case for cross-compilation.
+    AR="m68k-unknown-linux-gnu-ar" CC="m68k-unknown-linux-gnu-gcc" cargo build --target $TARGET_TRIPLE --features compiler_builtins/c
 fi
 
 # Copy files to sysroot

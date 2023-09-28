@@ -28,6 +28,7 @@ RUN_WRAPPER=''
 if [[ "$HOST_TRIPLE" != "$TARGET_TRIPLE" ]]; then
    if [[ "$TARGET_TRIPLE" == "m68k-unknown-linux-gnu" ]]; then
        #TARGET_TRIPLE="mips-unknown-linux-gnu"
+       # TODO: figure a better way for the user to do that automatically for any target.
        linker='-Clinker=m68k-unknown-linux-gnu-gcc'
    elif [[ "$TARGET_TRIPLE" == "aarch64-unknown-linux-gnu" ]]; then
       # We are cross-compiling for aarch64. Use the correct linker and run tests in qemu.
@@ -61,4 +62,4 @@ export DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH
 # To do so, add a symlink for cc to /opt/gcc/bin/gcc in our PATH.
 # Another option would be to add the following Rust flag: -Clinker=/opt/gcc/bin/gcc
 export PATH="/opt/m68k-unknown-linux-gnu/bin:$PATH"
-export TARGET=$TARGET_TRIPLE
+#export TARGET=$TARGET_TRIPLE
